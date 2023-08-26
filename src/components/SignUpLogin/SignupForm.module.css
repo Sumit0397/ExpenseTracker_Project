@@ -4,7 +4,7 @@
     margin-top: 8rem;
     max-width: 30rem;
     border-radius: 6px;
-    background-color: rgba(114, 190, 235, 0.5);
+    background-color: rgba(114, 190, 235);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     padding: 1rem;
     text-align: center;
@@ -14,4 +14,13 @@
 
 .signup h1 {
     font-weight: bold;
+}
+
+.toggle {
+    margin-top: 1rem;
+    background-color: transparent;
+    color: #740abb;
+    font-weight: bold;
+    border: none;
+    padding: 0.15rem 1.5rem;
 }
