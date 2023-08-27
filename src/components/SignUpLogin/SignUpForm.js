@@ -18,68 +18,101 @@ const SignupForm = (props) => {
 
     const [isLogin, setIsLogin] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+    const [varifyMail, setVarifyMail] = useState(false);
 
     const switchAuthModeHandler = () => {
         setIsLogin((prevState) => !prevState);
     };
 
 
-    const submitHandler = (event) => {
+    const submitHandler = async (event) => {
         event.preventDefault();
 
         const enteredEmail = emailInputRef.current.value;
         const enteredPass = passInputRef.current.value;
 
         setIsLoading(true);
-        let url;
-        if (isLogin) {
-            url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBUuvbK1Lq_5vuI32WAxGNgJ_0A9eLau9s"
-        } else {
-            const enteredConPass = conPassInputRef.current.value;
 
-
-            if (enteredPass !== enteredConPass) {
-                alert("Password not matched with Confirm password.");
-                setIsLoading(false);
-                return;
-            }
-
-            url = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBUuvbK1Lq_5vuI32WAxGNgJ_0A9eLau9s"
-        }
-        fetch(url, {
-            method: "POST",
-            body: JSON.stringify({
-                email: enteredEmail,
-                password: enteredPass,
-                returnSecureToken: true
-            }),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).then((res) => {
-            setIsLoading(false);
-            if (res.ok) {
-                return res.json();
+        try {
+            let url;
+            if (isLogin) {
+                url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBUuvbK1Lq_5vuI32WAxGNgJ_0A9eLau9s"
             } else {
-                return res.json().then((data) => {
-                    let errMsg = "Authentication Fail";
-                    if (data && data.error && data.error.message) {
-                        errMsg = data.error.message;
+                const enteredConPass = conPassInputRef.current.value;
+
+                if (enteredPass !== enteredConPass) {
+                    alert("Password not matched with Confirm password.");
+                    setIsLoading(false);
+                    return;
+                }
+
+                url = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBUuvbK1Lq_5vuI32WAxGNgJ_0A9eLau9s"
+            }
+
+            const response = await fetch(url, {
+                method: "POST",
+                body: JSON.stringify({
+                    email: enteredEmail,
+                    password: enteredPass,
+                    returnSecureToken: true
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                if(!isLogin){try {
+                    const response = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyBUuvbK1Lq_5vuI32WAxGNgJ_0A9eLau9s", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            requestType: "VERIFY_EMAIL",
+                            idToken: data.idToken,
+                        }),
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    if (response.ok) {
+                        setIsLoading(false);
+                        alert("Varification email sent.");
+                        setVarifyMail(true);
+                        setTimeout(() => {
+                            setVarifyMail(false)
+                        }, 10000)
+                    } else {
+                        throw new Error('Sign Up failed. Try again.')
                     }
-                    throw new Error(errMsg);
-                })
+                } catch (error) {
+                    alert(error)
+                }}
+                authCtx.login(data.idToken, data.email);
+
+                if (isLogin) {
+                    navigate("/profile");
+                }
+            } else {
+                const data = await response.json();
+                let errMsg = "Authentication Fail";
+
+                if (data && data.error && data.error.message) {
+                    errMsg = data.error.message;
+                }
+
+                throw new Error(errMsg);
             }
-        }).then((data) => {
-            console.log(data)
-            authCtx.login(data.idToken,data.email)
-            if(isLogin){
-                navigate("/profile")
-            }
-        }).catch((err) => {
-            alert(err.message)
-        })
-        formRef.current.reset()
+
+            formRef.current.reset();
+        } catch (error) {
+            alert(error.message);
+        }
     };
+
+
 
     return (
         <>
@@ -117,6 +150,11 @@ const SignupForm = (props) => {
                     {!isLoading ? <Button variant="primary" type="submit">
                         {isLogin ? "LogIn" : "SignUp"}
                     </Button> : <Button variant="primary">Sending Request...</Button>}
+                    {varifyMail && (
+                        <p style={{ margin: "1rem", color: "green" }}>
+                            Please varify email. Verfication mail already sent.
+                        </p>
+                    )}
                 </Form>
                 {!isLogin && <span>Already have an account?<button
                     className={classes.toggle}
