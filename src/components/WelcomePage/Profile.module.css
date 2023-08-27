@@ -1,17 +1,32 @@
 .proCon {
     padding: 0.5rem;
+    border-bottom: 2px solid black;
 }
 
 .proCon p {
     align-items: flex-start;
 }
 
-.header {
-    border-bottom: 2px solid black;
+.headerDetail {
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+}
+
+.headerDetail span {
+    margin-left: 55rem;
+}
+
+.header {
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     font-style: italic;
+    margin-right: 1rem;
+    margin-left: 1rem;
 }
 
 .incomplete {

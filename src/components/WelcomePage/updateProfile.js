@@ -13,7 +13,9 @@ const UpdateProfile = (props) => {
     useEffect(() => {
         if(props.user){
             emailInputRef.current.value = props.user.email;
-            nameInputRef.current.value = props.user.displayName;
+            if(props.user.displayName !== undefined){
+                nameInputRef.current.value = props.user.displayName;
+            }
         }
     },[props.user])
 
