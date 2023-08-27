@@ -1,12 +1,21 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Button, Form } from 'react-bootstrap';
 import classes from "./UpdateProfile.module.css";
 
-const UpdateProfile = () => {
+const UpdateProfile = (props) => {
     const formRef = useRef();
+    const emailInputRef = useRef();
     const nameInputRef = useRef();
     const contactInputRef = useRef();
     const locationInputRef = useRef();
+    console.log(props.user);
+
+    useEffect(() => {
+        if(props.user){
+            emailInputRef.current.value = props.user.email;
+            nameInputRef.current.value = props.user.displayName;
+        }
+    },[props.user])
 
     const updateFormHandler = async (event) => {
         event.preventDefault();
@@ -46,6 +55,10 @@ const UpdateProfile = () => {
         <div className={classes.updateForm}>
             <h1>Update profile</h1>
             <Form ref={formRef} onSubmit={updateFormHandler}>
+                <Form.Group className={classes["mb-3"]}>
+                    <Form.Label className={classes.label}>Email</Form.Label>
+                    <Form.Control placeholder="Email" ref={emailInputRef} />
+                </Form.Group>
                 <Form.Group className={classes["mb-3"]}>
                     <Form.Label className={classes.label}>Full Name:</Form.Label>
                     <Form.Control placeholder="Full Name" ref={nameInputRef} />
