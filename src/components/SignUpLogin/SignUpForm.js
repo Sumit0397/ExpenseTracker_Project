@@ -1,10 +1,14 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 
 import classes from "./SignupForm.module.css";
 import { useNavigate } from "react-router-dom";
+import AuthContext from "../../store/auth-context";
 
 const SignupForm = (props) => {
+
+    const authCtx = useContext(AuthContext);
+
     const formRef = useRef();
     const emailInputRef = useRef();
     const passInputRef = useRef();
@@ -67,8 +71,9 @@ const SignupForm = (props) => {
             }
         }).then((data) => {
             console.log(data)
+            authCtx.login(data.idToken,data.email)
             if(isLogin){
-                navigate("/welcome")
+                navigate("/profile")
             }
         }).catch((err) => {
             alert(err.message)
