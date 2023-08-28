@@ -12,10 +12,10 @@ const UpdateProfile = (props) => {
 
     useEffect(() => {
         if(props.user){
-            emailInputRef.current.value = props.user.email;
             if(props.user.displayName !== undefined){
                 nameInputRef.current.value = props.user.displayName;
             }
+            emailInputRef.current.value = props.user.email;
         }
     },[props.user])
 

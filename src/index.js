@@ -9,12 +9,15 @@ import { AuthContextProvider } from './store/auth-context';
 import "../node_modules/react-bootstrap/dist/react-bootstrap";
 
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css"
+import { ExpenseContextProvider } from './store/expense-context';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
     <AuthContextProvider>
-      <App />
+      <ExpenseContextProvider>
+        <App />
+      </ExpenseContextProvider>
     </AuthContextProvider>
   </BrowserRouter>
 );
