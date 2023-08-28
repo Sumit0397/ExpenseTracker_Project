@@ -1,9 +1,10 @@
 import React, { useContext, useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
-
+import { Link } from "react-router-dom";
 import classes from "./SignupForm.module.css";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../store/auth-context";
+import ForgotPassForm from "./ForgotPassForm";
 
 const SignupForm = (props) => {
 
@@ -19,6 +20,7 @@ const SignupForm = (props) => {
     const [isLogin, setIsLogin] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [varifyMail, setVarifyMail] = useState(false);
+    const [forgetVisisble , setForgetVisible] = useState(false);
 
     const switchAuthModeHandler = () => {
         setIsLogin((prevState) => !prevState);
@@ -83,7 +85,7 @@ const SignupForm = (props) => {
                         setVarifyMail(true);
                         setTimeout(() => {
                             setVarifyMail(false)
-                        }, 10000)
+                        }, 5000)
                     } else {
                         throw new Error('Sign Up failed. Try again.')
                     }
@@ -112,11 +114,17 @@ const SignupForm = (props) => {
         }
     };
 
+    const linkClickHandler = () => {
+        setForgetVisible(true);
+    }
 
+    const onBack = () => {
+        setForgetVisible(false);
+    }
 
     return (
         <>
-            <div className={classes.signup}>
+            {forgetVisisble ? <ForgotPassForm onReset={() => setForgetVisible(false)} onBack={onBack}/> : (<div className={classes.signup}>
                 <h1>{!isLogin ? "SignUp" : "LogIn"}</h1>
                 <Form ref={formRef} onSubmit={submitHandler}>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -147,6 +155,9 @@ const SignupForm = (props) => {
                             required
                         />
                     </Form.Group>}
+                    {isLogin && <Form.Group className="mb-3" controlId="formBasicPassword">
+                        <Link onClick={linkClickHandler}>Forgot Password?</Link>
+                    </Form.Group>}
                     {!isLoading ? <Button variant="primary" type="submit">
                         {isLogin ? "LogIn" : "SignUp"}
                     </Button> : <Button variant="primary">Sending Request...</Button>}
@@ -162,7 +173,7 @@ const SignupForm = (props) => {
                 {isLogin && <span>Don't have an account?<button
                     className={classes.toggle}
                     onClick={switchAuthModeHandler}>SignUp</button></span>}
-            </div>
+            </div>)}
 
         </>
     );
