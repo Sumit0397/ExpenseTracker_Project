@@ -95,7 +95,7 @@ const SignupForm = (props) => {
                 authCtx.login(data.idToken, data.email);
 
                 if (isLogin) {
-                    navigate("/profile");
+                    navigate("/profile/expense-tracker");
                 }
             } else {
                 const data = await response.json();
